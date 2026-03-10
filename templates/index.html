@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid AI Defense System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- LOADING OVERLAY -->
+    <div id="loading-overlay">
+        <div class="scanner-box">
+            <div class="scanner-line"></div>
+            <div class="scan-text">INITIATING HYBRID AI SCAN...</div>
+            <div class="scan-subtext">Consulting Local Model & Gemini Neural Network</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ HYBRID AI DEFENSE</h1>
+            <p>Powered by Naive Bayes + Google Gemini</p>
+        </div>
+
+        <div class="form-card">
+            <form action="/predict" method="POST" id="scan-form">
+                <label>INPUT EMAIL STREAM:</label>
+                <textarea name="message" rows="5" placeholder="Paste email content here..." required>{{ message if message else '' }}</textarea>
+                <button type="submit">⚡ DEEP SCAN</button>
+            </form>
+        </div>
+
+        {% if prediction %}
+        
+        <!-- RESULT DASHBOARD -->
+        <div class="dashboard">
+            
+            <!-- LEFT PANEL: Naive Bayes (Fast) -->
+            <div class="panel nb-panel">
+                <div class="panel-header">
+                    <h3>LOCAL AI (Naive Bayes)</h3>
+                    <span class="status-dot"></span>
+                </div>
+                <div class="panel-body">
+                    <div class="big-result {% if prediction == 'ham' %}text-safe{% else %}text-danger{% endif %}">
+                        {{ prediction|upper }}
+                    </div>
+                    <div class="meter">
+                        <label>Probability:</label>
+                        <div class="meter-bar">
+                            <div class="meter-fill" style="width: {{ confidence }};"></div>
+                        </div>
+                        <span>{{ confidence }}</span>
+                    </div>
+                    
+                    {% if indicators %}
+                    <div class="keywords-box">
+                        <small>Detected Keywords:</small>
+                        <div class="tags">
+                            {% for word in indicators %}
+                            <span class="tag">{{ word }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: Gemini (Smart) -->
+            <div class="panel gemini-panel">
+                <div class="panel-header">
+                    <h3>GEMINI AI (Deep Analysis)</h3>
+                    <span class="status-dot"></span>
+                </div>
+                <div class="panel-body">
+                    <div class="big-result {% if gemini_verdict == 'Ham' %}text-safe{% else %}text-danger{% endif %}">
+                        {{ gemini_verdict|upper }}
+                    </div>
+                    
+                    <div class="analysis-box">
+                        <h4>🕵️ Threat Report:</h4>
+                        <p>{{ gemini_analysis }}</p>
+                    </div>
+
+                    {% if gemini_verdict == 'Ham' and gemini_reply != 'None' %}
+                    <div class="reply-box">
+                        <h4>✉️ Suggested Reply:</h4>
+                        <p><em>"{{ gemini_reply }}"</em></p>
+                        <button onclick="copyText('{{ gemini_reply }}')" class="copy-btn">Copy Reply</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="final-verdict">
+    <h2>⚡ Final AI Decision</h2>
+    <div class="big-result {% if final_verdict == 'Ham' %}text-safe{% else %}text-danger{% endif %}">
+        {{ final_verdict|upper }}
+    </div>
+</div>
+<div class="risk-box">
+    <h3>Threat Risk Score</h3>
+    <p>{{ risk_score }}/100</p>
+</div>
+{% if phishing_flags %}
+<div class="phishing-box">
+    <h4>⚠ Phishing Indicators</h4>
+
+    <div class="tags">
+        {% for item in phishing_flags %}
+        <span class="tag tooltip">
+            {{ item.word }}
+            <span class="tooltiptext">{{ item.reason }}</span>
+        </span>
+        {% endfor %}
+    </div>
+
+</div>
+{% endif %}
+
+        </div>
+        <div class="analysis-box">
+<h4>🧠 Local AI Explanation</h4>
+<p>{{ explanation }}</p>
+</div>
+{% if url_flags %}
+<div class="phishing-box">
+<h4>🔗 Suspicious Links</h4>
+
+{% for item in url_flags %}
+<span class="tag" title="{{ item.reason }}">
+{{ item.url }}
+</span>
+{% endfor %}
+
+</div>
+{% endif %}
+        
+        <!-- COMPARISON FOOTER -->
+        {% if prediction != gemini_verdict %}
+        <div class="alert-box">
+            ⚠️ <strong>Discrepancy Detected:</strong> Local model says {{ prediction }}, but Gemini says {{ gemini_verdict }}. Trust Gemini for context.
+        </div>
+        {% endif %}
+
+        {% endif %}
+
+    </div>
+
+    <script>
+        // Loading Animation Logic
+        document.getElementById('scan-form').addEventListener('submit', function() {
+            document.getElementById('loading-overlay').style.display = 'flex';
+        });
+
+        // Copy to Clipboard Function
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert("Reply copied to clipboard!");
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
