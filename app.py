@@ -15,7 +15,7 @@ import nltk
 
 app = Flask(__name__)
 
-GENAI_API_KEY = "AIzaSyDjsvXz2vEwJFMC33FJvxSIiHRpHwD2Efo"
+GENAI_API_KEY = "AIzaSyDjsvXz2vEw**********SIiHRpHwD2Efo"
 genai.configure(api_key=GENAI_API_KEY)
 
 model = joblib.load('model/spam_model.pkl')
