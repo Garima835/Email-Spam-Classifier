@@ -6,7 +6,7 @@ import json
 import time
 import re
 from urllib.parse import urlparse
-from google import genai
+import google.generativeai as genai
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 import nltk
@@ -15,8 +15,8 @@ import nltk
 
 app = Flask(__name__)
 
-GENAI_API_KEY = "AIzaSyCprxPvUi4zMjWJpysliRsyV20CDB8nQkQ"
-client = genai.Client(api_key=GENAI_API_KEY)
+GENAI_API_KEY = "AIzaSyDjsvXz2vEwJFMC33FJvxSIiHRpHwD2Efo"
+genai.configure(api_key=GENAI_API_KEY)
 
 model = joblib.load('model/spam_model.pkl')
 vectorizer = joblib.load('model/vectorizer.pkl')
@@ -162,10 +162,8 @@ Return JSON:
 }}
 """
 
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt
-        )
+        model = genai.GenerativeModel('gemini-2.0-flash')
+        response = model.generate_content(prompt)
 
         json_text = response.text.replace("```json", "").replace("```", "").strip()
 
